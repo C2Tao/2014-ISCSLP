@@ -53,10 +53,10 @@ def parseNdw(inpath,Nep):
                 minutes = 0
             Ndw[i][minutes][userid] = lenval
     return Ndw,Nd,Nw,idx2user
-
+'''
 inpath = 'comment/nagi_comment (*).xml'
 Nep = 26
 Ndw,Nd,Nw,user_name = parseNdw(inpath,Nep)
 print Nd,Nw,sum(Nw)
 print np.shape(Ndw[0]),np.shape(Ndw[-1])
-
+'''

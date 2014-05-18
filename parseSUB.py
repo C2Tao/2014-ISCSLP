@@ -53,7 +53,7 @@ def parseNdu(inpath,Nep,Equ):
                 mints = int(line.split()[1].split(',')[1].split(':')[1])
                 Ndw[i][mints][aid]=wdlen
     return Ndw,Nd,Nw,[eq[0] for eq in Equ]
-
+'''
 inpath='subinfo/nagi_*.srt'
 Nep = 26
 Equ = parseEQU.nagi
@@ -61,3 +61,4 @@ Ndu,Nd,Nu, actor_name= parseNdu(inpath,Nep,Equ)
 print Nd,Nu
 print actor_name
 print np.shape(Ndu[0]),np.shape(Ndu[-1])
+'''
