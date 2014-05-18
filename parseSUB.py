@@ -46,7 +46,8 @@ def parseNud(inpath,Nep,Equ):
             if line.split(':')[0]=='Dialogue' and len(line.split()[1].split(','))>=5 \
             and line.split()[1].split(',')[4] in actorid:
                 actor = line.split()[1].split(',')[4]
-                aid = actoreq[actor]
+                try:    aid = actoreq[actor]
+                except: continue
 
                 wdlen = len(line.split()[1:])
                 mints = int(line.split()[1].split(',')[1].split(':')[1])
