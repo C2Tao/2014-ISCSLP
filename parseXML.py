@@ -3,7 +3,7 @@ import sys
 import numpy as np
 
 
-def parseNdw(inpath,Nep):
+def parseNwd(inpath,Nep):
     maxminute = 0
     for i in range(Nep):
         tree = ET.parse(inpath.split('*')[0]+str(i+1)+inpath.split('*')[1])
@@ -19,7 +19,7 @@ def parseNdw(inpath,Nep):
 
     Nd = maxminute+1
     Nw = [0 for i in range(Nep)]
-    Ndw = [[] for i in range(Nep)]
+    Nwd = [[] for i in range(Nep)]
     idx2user = [[] for i in range(Nep)]
 
 
@@ -30,7 +30,7 @@ def parseNdw(inpath,Nep):
         for child in root.iter('chat'):
             user_id[child.get('user_id')] = []
         Nw[i] = len(user_id)
-        Ndw[i] = np.zeros([Nd,Nw[i]])
+        Nwd[i] = np.zeros([Nw[i],Nd])
 
         
         for child in root.iter('chat'):
@@ -51,12 +51,12 @@ def parseNdw(inpath,Nep):
                 minutes = int(child.get('leaf'))
             except:
                 minutes = 0
-            Ndw[i][minutes][userid] = lenval
-    return Ndw,Nd,Nw,idx2user
+            Nwd[i][userid][minutes] = lenval
+    return Nwd,Nw,Nd,idx2user
 '''
 inpath = 'comment/nagi_comment (*).xml'
 Nep = 26
-Ndw,Nd,Nw,user_name = parseNdw(inpath,Nep)
-print Nd,Nw,sum(Nw)
-print np.shape(Ndw[0]),np.shape(Ndw[-1])
+Nwd,Nw,Nd,user_name = parseNdw(inpath,Nep)
+print Nw,Nd,sum(Nw)
+print np.shape(Nwd[0]),np.shape(Nwd[-1])
 '''

@@ -1,57 +1,66 @@
 import numpy as np
 import cPickle as pickle
-
+from numpy.random import rand
 f = open('nagi', "r")
-Nd = pickle.load(f)
-Nu = pickle.load(f)
-Nw = pickle.load(f)
-Ndu = pickle.load(f)
-Ndw = pickle.load(f)
+Md = pickle.load(f)
+Mu = pickle.load(f)
+Mw = pickle.load(f)
+Mud = pickle.load(f)
+Mwd = pickle.load(f)
 actor_name = pickle.load(f)
 f.close()
 
-print Nw, actor_name
+print Md,Mu,Mw
 
-import numpy as np
+
+
 def ksum(A,dim):
-    try:
-        return np.sum(A,dim,keepdims=True)
-    except:
-        return np.expand_dims(np.sum(A,dim),dim)
+    try:    return np.sum(A,dim,keepdims=True)
+    except: return np.expand_dims(np.sum(A,dim),dim)
 
+def plsa_assym(Nwd,Nz,iteration):
+    #dimension order Nw->Nz->Nd
+    [Nw,Nd] = np.shape(Nwd)
+    b = 1.0/Nw/Nd
 
-'''
-iteration = 100
-Nz = 3
+    #Initialization
+    Pwd    = np.expand_dims(Nwd,1)+b
+    Pz_wd  = rand(Nw,Nz,Nd)+b
+    Pd     = rand( 1, 1,Nd)+b
+    Pz_d   = rand( 1,Nz,Nd)+b
+    Pw_z   = rand(Nw,Nz, 1)+b
 
-Nab = Ndu[0]
-#dimension order Nz->Nd->Nw
+    #Normalization
+    Pwd   /= ksum(ksum(Pwd,0),2)
+    Pz_wd /= ksum(Pz_wd,1) 
+    Pd    /= ksum(Pd,2) 
+    Pz_d  /= ksum(Pz_d,1) 
+    Pw_z  /= ksum(Pw_z,0) 
+    for i in range(iteration):
+        #Expectaion
+        Pz_wd  = Pw_z * Pz_d * Pd
+        Pz_wd /= ksum(Pz_wd,1) 
 
+        #Maximization
+        Pwzd = Pwd*Pz_wd
+        Pzd  = ksum(Pwzd,0)
+        Pwz  = ksum(Pwzd,2)
+        Pd   = ksum(Pzd,1)
+        Pz   = ksum(Pzd,2)
+        Pz_d = Pzd/Pd
+        Pw_z = Pwz/Pz
+    return Pd, Pz_d, Pw_z
 
-[Na,Nb] = np.shape(Nab)
-Nab = np.expand_dims(Nab,0)
-Pa_z  = np.random.rand(Nz,Na, 1)
-Pb_z  = np.random.rand(Nz, 1,Nb)
-Pz    = np.random.rand(Nz, 1, 1)
-Pz_ab = np.random.rand(Nz,Na,Nb)
+iteration = 200
+Nz = 20
 
-for i in range(iteration):
-    Pz_ab = Pa_z * Pb_z * Pz
-    Pz_ab = Pz_ab/ksum(Pz_ab,0)
+#Nwd = Mud[0] 
+Nwd = np.concatenate((Mud[:]), axis=1)
 
-    Pzab = Nab*Pz_ab
-    Pz   = ksum(ksum(Pzab,2),1)
-    Pa_z = ksum(Pzab,2)/Pz
-    Pb_z = ksum(Pzab,1)/Pz
-    Pz   = Pz/ksum(Pz,0)
-
+Pd, Pz_d, Pw_z = plsa_assym(Nwd,Nz,iteration)
+print np.shape(Nwd)
 from pylab import *
-
-plot(Pz)
-
+#plot(np.sum(Pz_d,0).T)
+ax = plot(np.sum(Pw_z,2)[:7][:].T)
+legend(ax)
 show()
-
-#print Nd,Nu
-#print actor_name
-#print np.shape(Ndu[0]),np.shape(Ndu[-1])
-'''

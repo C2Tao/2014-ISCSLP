@@ -2,7 +2,7 @@ import sys
 import parseEQU
 import numpy as np
 
-def parseNdu(inpath,Nep,Equ):
+def parseNud(inpath,Nep,Equ):
     maincast = []
     allcount = []
     maxminute = 0
@@ -38,7 +38,7 @@ def parseNdu(inpath,Nep,Equ):
     #print actoreq
     #print Nd,Nw
 
-    Ndw = [np.zeros([Nd,Nw]) for i in range(Nep)]
+    Nwd = [np.zeros([Nw,Nd]) for i in range(Nep)]
     for i in range(Nep):
         intext = inpath.split('*')[0]+"{:02}".format(i+1)+inpath.split('*')[1]
         lines = open(intext).readlines()
@@ -48,17 +48,16 @@ def parseNdu(inpath,Nep,Equ):
                 actor = line.split()[1].split(',')[4]
                 aid = actoreq[actor]
 
-
                 wdlen = len(line.split()[1:])
                 mints = int(line.split()[1].split(',')[1].split(':')[1])
-                Ndw[i][mints][aid]=wdlen
-    return Ndw,Nd,Nw,[eq[0] for eq in Equ]
+                Nwd[i][aid][mints]=wdlen
+    return Nwd,Nw,Nd,[eq[0] for eq in Equ]
 '''
 inpath='subinfo/nagi_*.srt'
 Nep = 26
 Equ = parseEQU.nagi
-Ndu,Nd,Nu, actor_name= parseNdu(inpath,Nep,Equ)
-print Nd,Nu
+Nud,Nu,Nd, actor_name= parseNud(inpath,Nep,Equ)
+print Nu,Nd
 print actor_name
-print np.shape(Ndu[0]),np.shape(Ndu[-1])
+print np.shape(Nud[0]),np.shape(Nud[-1])
 '''
