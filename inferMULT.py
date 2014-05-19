@@ -1,15 +1,6 @@
 import numpy as np
 import cPickle as pickle
 from numpy.random import rand
-f = open('nagi', "r")
-Nd = pickle.load(f)
-Nu = pickle.load(f)
-Nw = pickle.load(f)
-Nud = pickle.load(f)
-Nwd = pickle.load(f)
-actor_name = pickle.load(f)
-user_name = pickle.load(f)
-f.close()
 
 def ksum(A,dim):
     try:    return np.sum(A,dim,keepdims=True)
@@ -56,8 +47,8 @@ def plsa_multi(Nall,scale,Nz,iteration):
             Pz_wd[i] /= ksum(Pz_wd[i],1) 
 
         #Maximization
-        Puzd = [Pud[i]*Pz_ud[i]*alpha[i] for i in range(Nep)]
-        Pwzd = [Pwd[i]*Pz_wd[i]*beta [i] for i in range(Nep)]   
+        Puzd  = [Pud[i]*Pz_ud[i]*alpha[i] for i in range(Nep)]
+        Pwzd  = [Pwd[i]*Pz_wd[i]*beta [i] for i in range(Nep)]   
 
         Pz_d  = [ksum(Puzd[i],0)+ksum(Pwzd[i],0) for i in range(Nep)]
         Pd    = [ksum(Pz_d[i],1)                 for i in range(Nep)]
@@ -68,21 +59,6 @@ def plsa_multi(Nall,scale,Nz,iteration):
 
         Pw_z  = [ksum(Pwzd[i],2)          for i in range(Nep)]
         Pw_z  = [Pw_z[i]/ksum(Pw_z[i],0)  for i in range(Nep)]
-
-    return Pz_d,Pu_z,Pw_z,Pd,Puzd,Pwzd
-
-
-iteration = 100
-Nz = 10
-Nep =26
-alpha = [10   for _ in range(Nep)]
-beta  = [1    for _ in range(Nep)]
-
-Pz_d,Pu_z,Pw_z,Pd,Puzd,Pwzd = plsa_multi([Nd,Nu,Nw,Nud,Nwd,Nep],[alpha,beta],Nz,iteration)
-
-
-from pylab import *
-print np.shape(Pu_z)
-ax = plot(np.sum(Pu_z,2).T)
-legend(ax,actor_name)
-show()
+    Pz_u  = ksum(Puzd[i],2)
+    Pz_u /= ksum(Pz_u,1) 
+    return Pz_d,Pu_z,Pw_z,Pd,Pz_u
