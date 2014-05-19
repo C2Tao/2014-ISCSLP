@@ -2,6 +2,9 @@ import numpy as np
 import cPickle as pickle
 from numpy.random import rand
 from inferMULT import plsa_multi
+from inferMULT import ksum
+import matplotlib.pyplot as plt
+import matplotlib.mlab as mlab
 
 f = open('nagi_evi', "r")
 Nd = pickle.load(f)
@@ -23,19 +26,57 @@ Pz_u = pickle.load(f)
 f.close()
 '''
 
-iteration = 200
+iteration = 100
 Nz = 5
 Nep =26
-alpha = [10   for _ in range(Nep)]
-beta  = [1    for _ in range(Nep)]
-Pz_d,Pu_z,Pw_z,Pd,Pz_u = plsa_multi([Nd,Nu,Nw,Nud,Nwd,Nep],[alpha,beta],Nz,iteration)
+redo = 3
+sigma = 6
+weight = 5
 
-from pylab import *
-print np.shape(Pz_u)
+mean1 = 6#6
+mean2 = 20#20
 
-Puz = np.sum(Pz_u,2)
-pcolor(Puz.dot(Puz.T))
-#pcolor(Puz)
-print np.sum(Puz,1)
-colorbar()
-show()
+love1 = np.zeros([7,7])
+love2 = np.zeros([7,7])
+
+for i in range(redo):
+	alpha1 = [weight*mlab.normpdf(j,mean1,sigma) for j in range(Nep)]
+	beta1  = [       mlab.normpdf(j,mean1,sigma) for j in range(Nep)]
+	Pz_d,Pu_z,Pw_z,Pd,Pz_u = plsa_multi([Nd,Nu,Nw,Nud,Nwd,Nep],[alpha1,beta1],Nz,iteration)
+	Puz = np.sum(Pz_u,2)
+	love1 += Puz.dot(Puz.T)
+
+
+
+for i in range(redo):
+	alpha2 = [weight*mlab.normpdf(j,mean2,sigma) for j in range(Nep)]
+	beta2  = [       mlab.normpdf(j,mean2,sigma) for j in range(Nep)]
+	Pz_d,Pu_z,Pw_z,Pd,Pz_u = plsa_multi([Nd,Nu,Nw,Nud,Nwd,Nep],[alpha2,beta2],Nz,iteration)
+	Puz = np.sum(Pz_u,2)
+	love2 += Puz.dot(Puz.T)
+
+
+
+plt.figure(1)
+plt.subplot(131)
+plt.pcolor(love1)
+plt.colorbar()
+
+
+Fuz = np.concatenate(Nud,axis=1)
+Fuz = Fuz/ksum(Fuz,1)
+print Fuz.dot(Fuz.T)
+
+plt.subplot(132)
+plt.pcolor(love2)
+plt.colorbar()
+
+
+plt.subplot(133)
+plt.plot(np.array([alpha1,alpha2]).T)
+plt.colorbar()
+
+plt.show()
+
+
+

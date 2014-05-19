@@ -54,11 +54,11 @@ def plsa_multi(Nall,scale,Nz,iteration):
         Pd    = [ksum(Pz_d[i],1)                 for i in range(Nep)]
         Pz_d  = [Pz_d[i]/Pd[i]                   for i in range(Nep)]
 
-        Pu_z  = ksum(Puzd[i],2)
+        Pu_z  = sum([ksum(Puzd[i],2) for i in range(Nep)])
         Pu_z /= ksum(Pu_z,0) 
 
         Pw_z  = [ksum(Pwzd[i],2)          for i in range(Nep)]
         Pw_z  = [Pw_z[i]/ksum(Pw_z[i],0)  for i in range(Nep)]
-    Pz_u  = ksum(Puzd[i],2)
+    Pz_u  = sum([ksum(Puzd[i],2) for i in range(Nep)])
     Pz_u /= ksum(Pz_u,1) 
     return Pz_d,Pu_z,Pw_z,Pd,Pz_u
