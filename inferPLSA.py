@@ -49,21 +49,20 @@ def plsa_assym(Nwd,Nz,iteration):
         Pz   = ksum(Pzd,2)
         Pz_d = Pzd/Pd
         Pw_z = Pwz/Pz
-    return Pd, Pz_d, Pw_z
+    return Pd, Pz_d, Pw_z, Pwzd
 
 iteration = 1000
-Nz = 5
+Nz = 2
 
 #Nwd = Mud[0] 
-Nwd = np.concatenate((Mud[0:26]), axis=1)
+Nwd = np.concatenate((Mud[0:4]), axis=1)
 #print np.sum(np.sum(Mud[0]))
 #print list(Nwd.T)
-Pd, Pz_d, Pw_z = plsa_assym(Nwd,Nz,iteration)
+Pd, Pz_d, Pw_z, Pwzd = plsa_assym(Nwd,Nz,iteration)
 print np.shape(Nwd)
 from pylab import *
-#ax = plot(np.sum(Pz_d,0).T)
-#ax = plot(np.sum(Pz_d,0).T)
-ax = plot(np.sum(Pw_z,2).T)
+ax = plot(np.sum(Pwzd,1).T)
+#ax = plot(np.sum(Pw_z,2).T)
 
 legend(ax,actor_name)
 show()
