@@ -26,12 +26,12 @@ Pz_u = pickle.load(f)
 f.close()
 '''
 
-iteration = 100
+iteration = 200
 Nz = 5
 Nep =26
 redo = 3
 sigma = 6
-weight = 5
+weight = 1
 
 mean1 = 6#6
 mean2 = 20#20
@@ -54,27 +54,19 @@ for i in range(redo):
 	Pz_d,Pu_z,Pw_z,Pd,Pz_u = plsa_multi([Nd,Nu,Nw,Nud,Nwd,Nep],[alpha2,beta2],Nz,iteration)
 	Puz = np.sum(Pz_u,2)
 	love2 += Puz.dot(Puz.T)
-
-
-
 plt.figure(1)
+
 plt.subplot(131)
-plt.pcolor(love1)
+plt.pcolor(love1/redo)
 plt.colorbar()
-
-
-Fuz = np.concatenate(Nud,axis=1)
-Fuz = Fuz/ksum(Fuz,1)
-print Fuz.dot(Fuz.T)
 
 plt.subplot(132)
-plt.pcolor(love2)
+plt.pcolor(love2/redo)
 plt.colorbar()
-
 
 plt.subplot(133)
 plt.plot(np.array([alpha1,alpha2]).T)
-plt.colorbar()
+
 
 plt.show()
 
